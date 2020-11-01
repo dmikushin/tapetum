@@ -52,10 +52,11 @@ macro(meta_generate PROJECT_NAME IN_SOURCE OUT_HEADER OUT_SOURCE ADDITIONAL_FLAG
 	target_sources(${PROJECT_NAME} PRIVATE ${OUT_HEADER_PATH} ${OUT_SOURCE_PATH})
 	
 	set(CMD "${META_CPP_EXE} \"${IN_SOURCE_PATH}\" -out-header \"${OUT_HEADER_PATH}\" -out-source \"${OUT_SOURCE_PATH}\" ${FLAGS}")
-	separate_arguments(CMD)
-
+	
 	# Useful for debugging
 	message("MetaCPP Command: ${CMD}")
+	
+	separate_arguments(CMD)
 	
 	add_custom_command(
     	OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/MetaCPP"
