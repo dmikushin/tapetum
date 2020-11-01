@@ -66,7 +66,7 @@ namespace metacpp {
 
 	bool Type::IsSequentialContainer() const {
 		const std::string& name = m_QualifiedName.GetName();
-		return name == "vector" || name == "deque" || name == "array" || name == "list" || name == "forward_list";
+		return name == "vector" || name == "array";
 	}
 
 	bool Type::IsStaticArray() const {

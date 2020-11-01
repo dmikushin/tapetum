@@ -172,14 +172,14 @@ namespace metacpp { namespace generated {
 #endif
 				
 			private:
-#if ({{isStaticArray}} == 1) // isStaticArray
-				mutable size_t m_Counter{0};
-#endif
 				{{qualifiedName}}& Cast(void* container) const {
 					return *reinterpret_cast<{{qualifiedName}}*>(container);
 				}
 				
 				Type* m_Type;
+#if ({{isStaticArray}} == 1) // isStaticArray
+				mutable size_t m_Counter{0};
+#endif
 			};
 			type->SetContainer(new SequentialContainerSpecialization(type));
 #endif

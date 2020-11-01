@@ -60,8 +60,11 @@ namespace metacpp {
 
 		// Types
 		mustache::data types{ mustache::data::type::list };
-		for (const auto& kv : m_Storage->m_Types)
-			types << ExportType(kv.second);
+		for (const auto& kv : m_Storage->m_Types) {
+			if(!(
+				kv.second->GetQualifiedName().GetName() == "__va_list_tag"))
+				types << ExportType(kv.second);
+		}
 		data["types"] = mustache::data{ types };
 
 		return data;
@@ -69,14 +72,14 @@ namespace metacpp {
 
 	mustache::data MetaExporter::ExportType(const Type* type) {
 		mustache::data data;
+
 		data["id"] = std::to_string(type->m_ID);
 		data["qualifiedName"] = type->m_QualifiedName.FullQualified();
 		data["name"] = type->m_QualifiedName.GetName();
-		data["hasSize"] = std::to_string(type->HasSize());
 		data["arraySize"] = std::to_string(type->m_ArraySize);
 		data["kind"] = std::to_string(static_cast<int>(type->m_Kind));
 		data["access"] = std::to_string(static_cast<int>(type->m_Access));
-		data["valid"] = std::to_string(type->IsValid());
+		bool valid = type->IsValid();
 		data["polymorphic"] = std::to_string(type->m_Polymorphic);
 		data["hasDefaultConstructor"] = std::to_string(type->m_HasDefaultConstructor);
 		data["hasDefaultDestructor"] = std::to_string(type->m_HasDefaultDestructor);
@@ -121,6 +124,12 @@ namespace metacpp {
 		// Template Arguments
 		mustache::data templateArguments{ mustache::data::type::list };
 		for (const TemplateArgument& arg : type->m_TemplateArguments) {
+			if (std::holds_alternative<QualifiedType>(arg)) {
+				const QualifiedType& qtype = std::get<QualifiedType>(arg);
+				Type* type = m_Storage->GetType(qtype.GetTypeID());
+				if(type)
+					valid &= type->IsValid();
+			}
 			templateArguments << ExportTemplateArgument(arg);
 		}
 
@@ -139,6 +148,8 @@ namespace metacpp {
 		data["baseTypes"] = mustache::data{ baseTypes };
 		data["derivedTypes"] = mustache::data{ derivedTypes };
 		data["templateArguments"] = mustache::data{ templateArguments };
+		data["valid"] = std::to_string(valid);
+		data["hasSize"] = std::to_string(valid && type->HasSize());
 
 		return data;
 	}

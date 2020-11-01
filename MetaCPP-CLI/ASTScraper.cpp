@@ -63,14 +63,30 @@ namespace metacpp {
 			ScrapeDeclContext(cxxRecordDecl, parent);
 			return 0;
 		}
-
+		int access = 0;
 		const clang::Type* cType = cxxRecordDecl->getTypeForDecl();
 		metacpp::Type* type = ScrapeType(cType, 1);
 
 		if (type) {
 			const clang::CXXRecordDecl* typeCxxRecordDecl = cType->getAsCXXRecordDecl();
 
-			type->SetAccess(TransformAccess(cxxRecordDecl->getAccess()));
+			access = std::max(access, (int)TransformAccess(cxxRecordDecl));
+			auto context = cxxRecordDecl->getDeclContext();
+			while(context) {
+				if(auto record = clang::dyn_cast<clang::CXXRecordDecl>(context)) {
+					access = std::max(access, (int)TransformAccess(record));
+				}
+				context = context->getParent();
+			}
+			for(const auto& arg : type->GetTemplateArguments()) {
+				if(std::holds_alternative<QualifiedType>(arg)) {
+					auto argType = m_Storage->GetType(std::get<QualifiedType>(arg).GetTypeID());
+					if(argType) {
+						access = std::max(access, (int)argType->GetAccess());
+					}
+				}
+			}
+			type->SetAccess((AccessSpecifier)access);
 			type->SetHasDefaultConstructor(!typeCxxRecordDecl->hasUserProvidedDefaultConstructor() && typeCxxRecordDecl->needsImplicitDefaultConstructor());
 			type->SetHasDefaultDestructor(typeCxxRecordDecl->needsImplicitDestructor());
 
@@ -102,36 +118,10 @@ namespace metacpp {
 			typeName += "<";
 
 			const clang::TemplateArgumentList& args = templateDecl->getTemplateArgs();
+			bool first = true;
 			for (int i = 0, end = (int) args.size(); i < end; i++) {
 				const clang::TemplateArgument& arg = args[i];
-				if (i > 0)
-					typeName += ",";
-
-				TemplateArgument argument;
-				switch (arg.getKind()) {
-					case clang::TemplateArgument::Type:
-						argument = ResolveQualType(arg.getAsType(), 1);
-						break;
-					case clang::TemplateArgument::Integral:
-						argument = arg.getAsIntegral().getLimitedValue();
-						break;
-					default:
-						std::cout << "Unsupported template argument!" << std::endl;
-						break;
-				}
-
-				if (std::holds_alternative<QualifiedType>(argument)) {
-					QualifiedType qualifiedType = std::get<QualifiedType>(argument);
-					if (qualifiedType.GetTypeID() != 0)
-						typeName += qualifiedType.GetQualifiedName(m_Storage);
-					else
-						typeName += "INVALID";
-				} else {
-					unsigned long long integral = std::get<unsigned long long>(argument);
-					typeName += std::to_string(integral);
-				}
-
-				templateArgs.push_back(argument);
+				ResolveCXXRecordTemplateArgument(typeName, templateArgs, first, arg);
 			}
 
 			typeName += ">";
@@ -140,6 +130,47 @@ namespace metacpp {
 		qualifiedName = ResolveQualifiedName(typeName);
 
 		return templateArgs;
+	}
+	void ASTScraper::ResolveCXXRecordTemplateArgument(std::string& typeName, std::vector<TemplateArgument>& templateArgs, bool& first, const clang::TemplateArgument& arg)
+	{
+
+		TemplateArgument argument;
+		switch (arg.getKind()) {
+			case clang::TemplateArgument::Type:
+				argument = ResolveQualType(arg.getAsType(), 1);
+				break;
+			case clang::TemplateArgument::Integral:
+				argument = arg.getAsIntegral().getLimitedValue();
+				break;
+			case clang::TemplateArgument::Pack: {
+				auto nestedArgs = arg.getPackAsArray();
+				for(auto nestedArg : nestedArgs) {
+					ResolveCXXRecordTemplateArgument(typeName, templateArgs, first, nestedArg);
+				}
+				return;
+			}
+				break;
+			default:
+				std::cout << "Unsupported template argument!" << std::endl;
+				break;
+		}
+
+		if (!first)
+			typeName += ",";
+
+		if (std::holds_alternative<QualifiedType>(argument)) {
+			QualifiedType qualifiedType = std::get<QualifiedType>(argument);
+			if (qualifiedType.GetTypeID() != 0)
+				typeName += qualifiedType.GetQualifiedName(m_Storage);
+			else
+				typeName += "INVALID";
+		} else {
+			unsigned long long integral = std::get<unsigned long long>(argument);
+			typeName += std::to_string(integral);
+		}
+		first = false;
+
+		templateArgs.push_back(argument);
 	}
 
 	Type* ASTScraper::ScrapeType(const clang::Type* cType, size_t arraySize) {
@@ -391,5 +422,20 @@ namespace metacpp {
 
 	void ASTScraper::SetContext(clang::ASTContext* context) {
 		m_Context = context;
+	}
+
+	AccessSpecifier ASTScraper::TransformAccess(const clang::CXXRecordDecl* decl)
+	{
+		switch (decl->getAccess()) {
+		case clang::AccessSpecifier::AS_none:
+			return decl->isClass() ? AccessSpecifier::PRIVATE : AccessSpecifier::PUBLIC;
+		case clang::AccessSpecifier::AS_public:
+			return AccessSpecifier::PUBLIC;
+		case clang::AccessSpecifier::AS_protected:
+			return AccessSpecifier::PROTECTED;
+		case clang::AccessSpecifier::AS_private:
+		default:
+			return AccessSpecifier::PRIVATE;
+		}
 	}
 }

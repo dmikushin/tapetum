@@ -36,6 +36,7 @@ namespace metacpp {
 		QualifiedName ResolveQualifiedName(std::string qualifiedName);
 		void RemoveAll(std::string& source, const std::string& search);
 		AccessSpecifier TransformAccess(const clang::AccessSpecifier as);
+		AccessSpecifier TransformAccess(const clang::CXXRecordDecl* decl);
 
 		bool IsReflected(const std::vector<std::string>& attrs);
 
@@ -45,6 +46,7 @@ namespace metacpp {
 		clang::ASTContext* m_Context;
 		Configuration m_Config;
 		Storage* m_Storage;
+		void ResolveCXXRecordTemplateArgument(std::string& typeName, std::vector<TemplateArgument>& templateArgs, bool& first, const clang::TemplateArgument& arg);
 	};
 }
 
