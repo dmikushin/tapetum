@@ -207,7 +207,12 @@ namespace metacpp {
 				kind = cType->isStructureType() ? metacpp::TypeKind::STRUCT : metacpp::TypeKind::CLASS;
 				break;
 			}
-			case clang::Type::TypeClass::Pointer:
+            case clang::Type::TypeClass::FunctionProto:
+            case clang::Type::TypeClass::Vector:
+            case clang::Type::TypeClass::Pointer:
+            case clang::Type::TypeClass::InjectedClassName:
+            case clang::Type::TypeClass::MemberPointer:
+            case clang::Type::TypeClass::Enum:
 //				std::cout << "[Ignored TypeClass: " << cType->getTypeClassName() << "]" << std::endl;
 //              cType->dump();
 				return 0;
@@ -225,7 +230,6 @@ namespace metacpp {
 				std::cout << "[Failed to scrape ConstantArray]" << std::endl;
 				return 0;
 			}
-				break;
 			default:
 				// TODO: this should never happen: we print it because we are afraid that it probably should be supported.
 				std::cout << "[Unsupported TypeClass: " << cType->getTypeClassName() << "]" << std::endl;
