@@ -194,8 +194,7 @@ namespace metacpp { namespace generated {
 		// IDs
 		//////////////////////////////////////////////
 		{{#ids}}
-		storage->AssignTypeID("{{qualifiedName}}", {{id}});
-		{{/ids}}
+		storage->AssignTypeID("{{qualifiedName}}", {{id}});{{/ids}}
 	}
 } }
 
