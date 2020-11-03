@@ -18,7 +18,8 @@ namespace metacpp {
 		flags.push_back("-D_DEBUG");
 #endif
 		flags.push_back("-xc++");
-		flags.push_back("-std=c++17");
+        flags.push_back("-std=c++17");
+        flags.push_back("-Wno-invalid-constexpr");
 
 		m_CompilationDatabase = new clang::tooling::FixedCompilationDatabase(".", flags);
 		m_ClangTool = new clang::tooling::ClangTool(*m_CompilationDatabase, source);
