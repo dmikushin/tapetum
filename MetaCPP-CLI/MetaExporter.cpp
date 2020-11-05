@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include "Templates.hpp"
 
@@ -11,13 +12,24 @@ namespace metacpp {
 	}
 
 	void MetaExporter::Export(const std::string& inputSource, const std::string& outputHeader, const std::string& outputSource) {
-		std::ofstream out_header(outputHeader);
-		std::ofstream out_source(outputSource);
 
 		mustache::data storageData = ExportStorage();
 
-		out_source << GenerateSourceFile({ outputHeader }, storageData);
-		out_header << GenerateHeaderFile({ inputSource }, storageData);
+		std::string new_source = GenerateSourceFile({ outputHeader }, storageData);
+		std::string new_header = GenerateHeaderFile({ inputSource }, storageData);
+
+        std::string old_source = ReadFileContent(outputSource);
+        std::string old_header = ReadFileContent(outputHeader);
+
+        if(old_source != new_source) {
+            std::ofstream out_source(outputSource);
+            out_source << new_source;
+        }
+
+        if(old_header != new_header) {
+            std::ofstream out_header(outputHeader);
+            out_header << new_header;
+        }
 	}
 
 	std::string MetaExporter::GenerateSourceFile(const std::vector<std::string>& includes, mustache::data& storageData) {
@@ -213,4 +225,19 @@ namespace metacpp {
 		data["qualifiedType"] = ExportQualifiedType(parameter.GetType());
 		return data;
 	}
+
+    std::string MetaExporter::ReadFileContent(const std::string &filename) {
+        std::ifstream in(filename, std::ios::in | std::ios::binary);
+        if (in)
+        {
+            std::string contents;
+            in.seekg(0, std::ios::end);
+            contents.resize(in.tellg());
+            in.seekg(0, std::ios::beg);
+            in.read(&contents[0], contents.size());
+            in.close();
+            return(contents);
+        }
+        return "";
+    }
 }

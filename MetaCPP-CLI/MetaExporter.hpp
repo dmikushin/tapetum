@@ -38,6 +38,7 @@ namespace metacpp {
 		mustache::data ExportMethodParameter(const MethodParameter& parameter);
 
 		void SetIncludes(const std::vector<std::string>& includes, mustache::data& data);
+        static std::string ReadFileContent(const std::string &filename);
 
 		const Storage* m_Storage;
 	};
