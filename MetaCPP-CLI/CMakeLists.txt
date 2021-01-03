@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
 project(MetaCPP-CLI)
 
+
+
+add_compile_options(-Wno-unused-lambda-capture -Wno-ambiguous-reversed-operator)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../CMake")
 
 add_subdirectory(../MetaCPP MetaCPP)

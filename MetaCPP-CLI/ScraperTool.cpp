@@ -18,7 +18,7 @@ namespace metacpp {
 		flags.push_back("-D_DEBUG");
 #endif
 		flags.push_back("-xc++");
-        flags.push_back("-std=c++17");
+        flags.push_back("-std=c++20");
         flags.push_back("-Wno-invalid-constexpr");
 
 		m_CompilationDatabase = new clang::tooling::FixedCompilationDatabase(".", flags);
@@ -50,6 +50,7 @@ namespace metacpp {
 			ASTScraperAction(ASTScraper* scraper) : scraper(scraper) {};
 
 			std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance& Compiler, llvm::StringRef InFile) override {
+                (void)InFile;
 				scraper->SetContext(&Compiler.getASTContext());
 				return std::unique_ptr<clang::ASTConsumer>(new ASTScraperConsumer(scraper));
 			};

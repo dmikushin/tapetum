@@ -5,11 +5,11 @@
 
 namespace metacpp {
 	QualifiedType::QualifiedType()
-			: m_Type(0), m_Operator(QualifierOperator::VALUE), m_Const(false), m_ArraySize(1) {
+			: m_Operator(QualifierOperator::VALUE), m_Const(false), m_Type(0), m_ArraySize(1) {
 	}
 
 	QualifiedType::QualifiedType(TypeID typeID, QualifierOperator qualifierOperator, bool is_const, size_t arraySize)
-			: m_Type(typeID), m_Operator(qualifierOperator), m_Const(is_const), m_ArraySize(arraySize) {
+			: m_Operator(qualifierOperator), m_Const(is_const), m_Type(typeID), m_ArraySize(arraySize) {
 	}
 
 	std::string QualifiedType::GetQualifiedName(const Storage* storage) const {

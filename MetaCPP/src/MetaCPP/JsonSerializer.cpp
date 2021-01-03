@@ -139,7 +139,7 @@ namespace metacpp {
 				return object;
 
 			object.SetArray();
-			for (int i = 0; i < size; i++) {
+			for (int i = 0, end = (int)size; i < end; i++) {
 				void* item = sc->At(ptr, i);
 				object.PushBack(SerializeType(item_qtype, item, pointer_recursion, context), context.document->GetAllocator());
 			}
