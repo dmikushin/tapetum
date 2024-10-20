@@ -1,9 +1,9 @@
 # !!!!!
 # README
 #
-# You have to be building MetaCPPCLI or specify the location of the executable like this:
+# You have to be building metacpp_cli or specify the location of the executable like this:
 #
-# set(META_CPP_BIN "Tools/MetaCPPCLI.exe")
+# set(META_CPP_BIN "Tools/metacpp_cli.exe")
 #
 # You have to be using CMake 3.1 or newer (target_sources)
 # !!!!!
@@ -34,10 +34,10 @@ macro(meta_generate PROJECT_NAME IN_SOURCE OUT_HEADER OUT_SOURCE ADDITIONAL_FLAG
 	get_filename_component(OUT_SOURCE_PATH "${OUT_SOURCE}" REALPATH BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 	# get the executable absolute path
-	if(TARGET MetaCPPCLI)
+	if(TARGET metacpp_cli)
 		# we're compiling the cli
-		add_dependencies(${PROJECT_NAME} MetaCPPCLI)
-		set(META_CPP_EXE "$<TARGET_FILE:MetaCPPCLI>")
+		add_dependencies(${PROJECT_NAME} metacpp_cli)
+		set(META_CPP_EXE "$<TARGET_FILE:metacpp_cli>")
 	else()
 		# we'll fallback to a precompiled
 		get_filename_component(META_CPP_EXE "${META_CPP_BIN}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -46,7 +46,7 @@ macro(meta_generate PROJECT_NAME IN_SOURCE OUT_HEADER OUT_SOURCE ADDITIONAL_FLAG
 	message("  Source in: ${IN_SOURCE_PATH}")
 	message("  Header out: ${OUT_HEADER_PATH}")
 	message("  Source out: ${OUT_SOURCE_PATH}")
-	message("  MetaCPPCLI path: ${META_CPP_EXE}")
+	message("  metacpp_cli path: ${META_CPP_EXE}")
 	#message("  FLAGS: ${FLAGS}")
 	
 	target_sources(${PROJECT_NAME} PRIVATE ${OUT_HEADER_PATH} ${OUT_SOURCE_PATH})

@@ -1,16 +1,9 @@
-cmake_minimum_required (VERSION 2.8)
-project(MetaCPP-Example)
+cmake_minimum_required(VERSION 3.5)
 
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(../MetaCPP-CLI MetaCPP-CLI)
-
-add_executable(Example main.cpp objects.hpp)
-
-target_link_libraries(Example MetaCPP)
-
-# MetaCPP automatic reflection
-include(../CMake/MetaPrebuild.cmake)
+add_executable(${PROJECT_NAME}_example main.cpp objects.hpp)
+target_link_libraries(${PROJECT_NAME}_example ${PROJECT_NAME})
 
 if(NOT DEFINED META_GENERATE_FLAGS)
     set(META_GENERATE_FLAGS "")
@@ -33,4 +26,4 @@ else()
     endforeach()
 endif()
 
-meta_generate(Example "objects.hpp" "Generated.hpp" "Generated.cpp" "${META_GENERATE_FLAGS}")
+meta_generate(${PROJECT_NAME}_example "objects.hpp" "Generated.hpp" "Generated.cpp" "${META_GENERATE_FLAGS}")
