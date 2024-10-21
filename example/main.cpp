@@ -37,6 +37,11 @@ int main() {
 
 	// serialize
 	std::string json = serializer.Serialize(&map, true /* pretty print */);
+	if (json == "{}") {
+		std::cerr << "The serialization cannot be empty!" << std::endl;
+		return 1;
+	}
+
 	std::cout << "Original: " << json << std::endl;
 
 	// deserialize
@@ -49,7 +54,7 @@ int main() {
 		return 0;
 	}
 	else {
-		std::cout << "The serialization did not match!" << std::endl;
+		std::cerr << "The serialization did not match!" << std::endl;
 		std::cout << "Reserialized: " << reserialized << std::endl;
 		return 1;
 	}
