@@ -1,4 +1,4 @@
-#include "MetaCPP/QualifiedName.hpp"
+#include "QualifiedName.hpp"
 
 #include <iostream>
 #include <sstream>

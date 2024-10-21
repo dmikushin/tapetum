@@ -8,7 +8,7 @@
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
 
-#include "MetaCPP/SequentialContainer.hpp"
+#include "SequentialContainer.hpp"
 #include "TypeInfo.hpp"
 #include "Storage.hpp"
 

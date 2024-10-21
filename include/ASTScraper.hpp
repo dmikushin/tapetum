@@ -4,9 +4,9 @@
 #include <clang/AST/DeclCXX.h>
 #include <clang/AST/ASTImporter.h>
 
-#include "MetaCPP/Storage.hpp"
-#include "MetaCPP/QualifiedName.hpp"
-#include "MetaCPP/QualifiedType.hpp"
+#include "Storage.hpp"
+#include "QualifiedName.hpp"
+#include "QualifiedType.hpp"
 
 namespace metacpp {
 

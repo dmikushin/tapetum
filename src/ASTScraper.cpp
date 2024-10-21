@@ -10,7 +10,7 @@
 #include <clang/AST/Decl.h>
 #include <clang/Basic/TargetInfo.h>
 
-#include "MetaCPP/Type.hpp"
+#include "Type.hpp"
 
 namespace metacpp {
 	ASTScraper::ASTScraper(Storage* storage, const Configuration& config)
@@ -69,6 +69,9 @@ namespace metacpp {
 
 		if (type) {
 			const clang::CXXRecordDecl* typeCxxRecordDecl = cType->getAsCXXRecordDecl();
+			std::string name = typeCxxRecordDecl->getNameAsString();
+			if (name == "Map")
+				access = 0;
 
 			access = std::max(access, (int)TransformAccess(cxxRecordDecl));
 			auto context = cxxRecordDecl->getDeclContext();

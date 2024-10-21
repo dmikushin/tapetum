@@ -4,7 +4,7 @@ R"(/****************************************************************************
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <MetaCPP/TypeInfo.hpp>
+#include <TypeInfo.hpp>
 
 {{#includes}}
 #include "{{file}}"

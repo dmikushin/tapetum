@@ -1,4 +1,4 @@
-#include "MetaCPP/Method.hpp"
+#include "Method.hpp"
 
 namespace metacpp {
 	MethodParameter::MethodParameter(const std::string& name, const QualifiedType& type)

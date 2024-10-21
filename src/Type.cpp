@@ -1,7 +1,7 @@
-#include "MetaCPP/Type.hpp"
+#include "Type.hpp"
 
-#include "MetaCPP/Storage.hpp"
-#include "MetaCPP/QualifiedType.hpp"
+#include "Storage.hpp"
+#include "QualifiedType.hpp"
 
 namespace metacpp {
 	Type::Type(const TypeID id, const QualifiedName& qName)

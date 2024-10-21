@@ -8,7 +8,7 @@
 
 using namespace kainjow;
 
-#include "MetaCPP/Storage.hpp"
+#include "Storage.hpp"
 
 namespace metacpp {
 	class Storage;

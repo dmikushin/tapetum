@@ -1,4 +1,4 @@
-#include "MetaCPP/Runtime.hpp"
+#include "Runtime.hpp"
 
 namespace metacpp {
 	Storage* Runtime::s_Storage = 0;

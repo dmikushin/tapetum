@@ -1,7 +1,7 @@
-#include "MetaCPP/QualifiedType.hpp"
+#include "QualifiedType.hpp"
 
-#include "MetaCPP/Storage.hpp"
-#include "MetaCPP/Type.hpp"
+#include "Storage.hpp"
+#include "Type.hpp"
 
 namespace metacpp {
 	QualifiedType::QualifiedType()

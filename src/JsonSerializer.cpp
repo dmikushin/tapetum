@@ -1,6 +1,6 @@
-#include "MetaCPP/JsonSerializer.hpp"
+#include "JsonSerializer.hpp"
 
-#include "MetaCPP/Type.hpp"
+#include "Type.hpp"
 
 namespace metacpp {
 	using namespace rapidjson;

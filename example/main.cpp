@@ -2,9 +2,9 @@
 
 #include "objects.hpp"
 
-#include <MetaCPP/Storage.hpp>
-#include <MetaCPP/Runtime.hpp>
-#include <MetaCPP/JsonSerializer.hpp>
+#include <Storage.hpp>
+#include <Runtime.hpp>
+#include <JsonSerializer.hpp>
 
 int main() {
 	metacpp::Storage* storage = metacpp::Runtime::GetStorage();

@@ -4,11 +4,11 @@ R"(/****************************************************************************
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include <MetaCPP/Type.hpp>
-#include <MetaCPP/Field.hpp>
-#include <MetaCPP/Method.hpp>
-#include <MetaCPP/Storage.hpp>
-#include <MetaCPP/SequentialContainer.hpp>
+#include <Type.hpp>
+#include <Field.hpp>
+#include <Method.hpp>
+#include <Storage.hpp>
+#include <SequentialContainer.hpp>
 
 {{#includes}}
 #include "{{file}}"

@@ -6,7 +6,7 @@
 #include "ASTScraper.hpp"
 #include "MetaExporter.hpp"
 #include "ScraperTool.hpp"
-#include "MetaCPP/Storage.hpp"
+#include "Storage.hpp"
 
 using namespace llvm;
 

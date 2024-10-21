@@ -1,7 +1,7 @@
 #ifndef METACPP_RUNTIME_HPP
 #define METACPP_RUNTIME_HPP
 
-#include "MetaCPP/Storage.hpp"
+#include "Storage.hpp"
 
 namespace metacpp {
 	namespace generated { extern void Load(Storage* storage); }
