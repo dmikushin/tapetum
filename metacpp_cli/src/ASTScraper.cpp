@@ -198,6 +198,9 @@ namespace metacpp {
 						return 0; // forward declaration
 					}
 				}
+				if (!cxxRecordDecl->getDeclName()) {
+					return 0; // TODO is anonymous
+				}
 				templateArgs = ResolveCXXRecordTemplate(cxxRecordDecl, qualifiedName);
 
 				if (qualifiedName.GetName().size() == 0) {
