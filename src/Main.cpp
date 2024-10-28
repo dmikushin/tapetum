@@ -18,7 +18,7 @@ static cl::list<std::string> CompilerFlags("flag", cl::desc("Compiler flags"), c
 
 static cl::opt<std::string> ReflectionAnnotation("reflection-annotation", cl::desc("Only reflect types that contain this annotation"), cl::value_desc("name"));
 
-int main(int argc, const char** argv) {
+int main_(int argc, const char** argv) {
 	cl::ParseCommandLineOptions(argc, argv, "MetaCPP");
 
 	metacpp::Storage* storage = new metacpp::Storage();

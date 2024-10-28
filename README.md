@@ -5,20 +5,22 @@ This is a Clang plugin, which adds serialization and deserialization capabilitie
 1. Intrinsics to serialize and deserialize any given structure:
 
 ```c
-char* serialize(T* val);
-T* deserialize(const char* json);
+#pragma serialize(to: json, from : val)
+#pragma deserialize(to: val, from: json)
 ```
 
 2. An instinsic to call a function from serialized arguments, that are deserialized on-the-fly:
 
 ```c
-int ret = deserialize_call(function, const char* json);
+#pragma deserialize(to: function, from: json)
+int ret;
 ```
 
 3. An attribute to serialize the function arguments before or after the call:
 
 ```c
-function(a,b) [[serialize(const char* json), before|after]];
+#pragma serialize(to: json, [before|after])
+function(a,b)
 ```
 
 

@@ -1,61 +1,50 @@
-#include <iostream>
+#include <stdio.h>
 
-#include "objects.hpp"
+// Define a structure
+struct Test {
+    int a;
+    float b;
+};
 
-#include <Storage.hpp>
-#include <Runtime.hpp>
-#include <JsonSerializer.hpp>
+// Test serialization and deserialization of a structure
+void test_serialize_deserialize() {
+    struct Test val = {10, 20.5};
+
+    #pragma serialize(to: json, from : val)
+    char* json;
+
+    printf("Serialized JSON: %s\n", json);
+
+    struct Test new_val;
+    #pragma deserialize(to: new_val, from: json)
+
+    printf("Deserialized structure: a = %d, b = %f\n", new_val.a, new_val.b);
+}
+
+int test(int a, float b) {
+    printf("Function called with deserialized arguments: a = %d, b = %f\n", a, b);
+    return 1;
+}
+
+// Test calling a function from serialized arguments
+void test_function_call() {
+    const char* json = "{\"a\": 10, \"b\": 20.5}";
+
+    #pragma deserialize(to: test_serialize_deserialize, from: json)
+    int ret;
+}
+
+// Test serialization of function arguments
+void test_function_args(int a, float b) {
+    #pragma serialize(to: json, before)
+    printf("Function called with: a = %d, b = %f\n", a, b);
+}
 
 int main() {
-	metacpp::Storage* storage = metacpp::Runtime::GetStorage();
-	metacpp::generated::Load(storage);
+    test_serialize_deserialize();
+    test_function_call();
+    test_function_args(10, 20.5);
 
-	Player* player = new Player();
-	player->health = 255;
-	player->position = { 5, 5 };
-	player->velocity = { 1, 1 };
-	player->name = "mlomb";
-
-	Monster* monster = new Monster();
-	monster->health = 255;
-	monster->position = { 10, 10 };
-	monster->velocity = { -1, -1 };
-	monster->scary_factor = 42.123;
-
-	Map map;
-	map.entities = { player, monster };
-
-	map.magic_numbers = { 4, 2 };
-
-	map.map = {
-			{ 1, 2, 3 },
-			{ 4, 5, 6 },
-			{ 7, 8, 9 },
-	};
-
-	metacpp::JsonSerializer serializer = metacpp::JsonSerializer(storage);
-
-	// serialize
-	std::string json = serializer.Serialize(&map, true /* pretty print */);
-	if (json == "{}") {
-		std::cerr << "The serialization cannot be empty!" << std::endl;
-		return 1;
-	}
-
-	std::cout << "Original: " << json << std::endl;
-
-	// deserialize
-	Map* deserialized_map = serializer.DeSerialize<Map>(json);
-
-	// serialize again and compare the jsons
-	std::string reserialized = serializer.Serialize(deserialized_map, true);
-	if (reserialized == json) {
-		std::cout << "The serialization was successful!" << std::endl;
-		return 0;
-	}
-	else {
-		std::cerr << "The serialization did not match!" << std::endl;
-		std::cout << "Reserialized: " << reserialized << std::endl;
-		return 1;
-	}
+    return 0;
 }
+
