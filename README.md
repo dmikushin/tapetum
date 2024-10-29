@@ -12,8 +12,8 @@ This is a Clang plugin, which adds serialization and deserialization capabilitie
 2. An instinsic to call a function from serialized arguments, that are deserialized on-the-fly:
 
 ```c
-#pragma deserialize(to: function, from: json)
-int ret;
+#pragma deserialize(from: json)
+int ret = function(a, b)
 ```
 
 3. An attribute to serialize the function arguments before or after the call:
