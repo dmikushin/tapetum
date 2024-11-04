@@ -46,7 +46,8 @@ target_compile_options(${PROJECT_NAME}_plugin PRIVATE ${DISABLE_RTTI_FLAG})
 set_target_properties(${PROJECT_NAME}_plugin PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME}_plugin PROPERTIES PREFIX "")
 target_compile_definitions(${PROJECT_NAME}_plugin PRIVATE ${LLVM_DEFINITIONS})
-target_compile_options(${PROJECT_NAME}_plugin PRIVATE -Wno-unused-lambda-capture -Wno-ambiguous-reversed-operator -Wno-unused-parameter)
+# Use DWARF 4 for Valgrind compatibility: https://github.com/llvm/llvm-project/issues/56550
+target_compile_options(${PROJECT_NAME}_plugin PRIVATE -Wno-unused-lambda-capture -Wno-ambiguous-reversed-operator -Wno-unused-parameter -gdwarf-4)
 #target_link_directories(${PROJECT_NAME}_plugin PRIVATE ${LLVM_LIB_DIR})
 target_link_libraries(${PROJECT_NAME}_plugin libclang clang-cpp LLVM)
 
@@ -57,6 +58,7 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} INTERFACE ThirdParty/rapidjson/include)
 target_compile_options(${PROJECT_NAME} INTERFACE -fplugin=$<TARGET_FILE:${PROJECT_NAME}_plugin>)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_plugin)
 
 add_subdirectory(example)
 

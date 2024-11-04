@@ -5,22 +5,37 @@
 
 #include "SerializePragmaHandler.h"
 #include "DeserializePragmaHandler.h"
+#include "SerializeWriter.h"
+#include "DeserializeWriter.h"
+#include "SerializeWriterTest.h"
+#include "DeserializeWriterTest.h"
+
+#include <memory>
 
 namespace {
 
+template<typename TSerializeWriter, typename TDeserializeWriter>
 class TapetumASTConsumer : public clang::ASTConsumer {
 public:
-  clang::PPCallbacks *PPC;
-  SerializePragmaHandler SPH;
-  DeserializePragmaHandler DPH;
+  SerializePragmaHandler *SPH;
+  DeserializePragmaHandler *DPH;
+  std::unique_ptr<TSerializeWriter> SW;
+  std::unique_ptr<TDeserializeWriter> DW;
 
   explicit TapetumASTConsumer(clang::CompilerInstance &CI) {
     auto &PP = CI.getPreprocessor();
-    PP.AddPragmaHandler(&SPH);
-    PP.AddPragmaHandler(&DPH);
+    SW.reset(new TSerializeWriter(CI));
+    DW.reset(new TDeserializeWriter(CI));
+    SPH = new SerializePragmaHandler(CI, *dynamic_cast<SerializeWriterAdapter*>(SW.get()));
+    DPH = new DeserializePragmaHandler(CI, *dynamic_cast<DeserializeWriterAdapter*>(DW.get()));
+    PP.AddPragmaHandler(SPH);
+    PP.AddPragmaHandler(DPH);
   }
+
+  virtual ~TapetumASTConsumer() {}
 };
 
+template<typename TSerializeWriter, typename TDeserializeWriter>
 class TapetumPluginASTAction : public clang::PluginASTAction {
 public:
   TapetumPluginASTAction() : clang::PluginASTAction() {}
@@ -29,16 +44,19 @@ public:
 
   TapetumPluginASTAction &operator=(TapetumPluginASTAction const &) = delete;
 
+  virtual ~TapetumPluginASTAction() {}
+
 private:
   bool ParseArgs(const clang::CompilerInstance &CI,
                  const std::vector<std::string> &args) override {
-    return true;  // Assume the arguments are fine
+    // Assume the arguments are fine
+    return true;
   }
 
   std::unique_ptr<clang::ASTConsumer>
   CreateASTConsumer(clang::CompilerInstance &CI,
                     llvm::StringRef InFile) override {
-    return std::make_unique<TapetumASTConsumer>(CI);
+    return std::make_unique<TapetumASTConsumer<TSerializeWriter, TDeserializeWriter>>(CI);
   }
 
   clang::PluginASTAction::ActionType getActionType() override {
@@ -48,6 +66,9 @@ private:
 
 }
 
-static clang::FrontendPluginRegistry::Add<TapetumPluginASTAction>
-X("tapetum", "Enable native C/C++ serialization and deserialization");
+static clang::FrontendPluginRegistry::Add<TapetumPluginASTAction<SerializeWriter, DeserializeWriter>>
+X("tapetum", "Enable native C/C++ serialization and deserialization of structs and functions");
+
+static clang::FrontendPluginRegistry::Add<TapetumPluginASTAction<SerializeWriterTest, DeserializeWriterTest>>
+XTest("tapetum-test", "Enable native C/C++ serialization and deserialization of structs and functions");
 
