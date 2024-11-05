@@ -15,8 +15,8 @@ public:
 
   virtual ~SerializeWriter() {}
 
-  virtual void serializeFunction(const std::string& fromArg, clang::Stmt *S) override;
-  virtual void serializeStruct(const std::string& fromArg, const std::string& toArg, clang::Stmt* S) override;
+  virtual void serializeFunction(const std::string& toArg, clang::Stmt *S) override;
+  virtual void serializeStruct(const std::string& toArg, const std::string& fromArg, clang::Stmt* S) override;
 };
 
 #endif // SERIALIZE_WRITER_H

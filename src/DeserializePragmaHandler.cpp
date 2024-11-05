@@ -16,6 +16,8 @@ using namespace clang;
 using namespace clang::tooling;
 using namespace llvm;
 
+namespace {
+
 class FindNextStatementVisitor : public RecursiveASTVisitor<FindNextStatementVisitor> {
 public:
   explicit FindNextStatementVisitor(SourceLocation pragmaLoc)
@@ -45,6 +47,17 @@ private:
   Stmt *NextStatement;
 };
 
+enum class State {
+  INIT,
+  EXPECT_IDENTIFIER,
+  EXPECT_COLON,
+  GET_VALUE,
+  EXPECT_COMMA_OR_CLOSE,
+  FINAL
+};
+
+} // namespace
+
 static std::string getArgumentValue(Preprocessor &PP, Token &Tok) {
   if (Tok.is(tok::string_literal)) {
     return Lexer::getSourceText(CharSourceRange::getTokenRange(
@@ -57,19 +70,7 @@ static std::string getArgumentValue(Preprocessor &PP, Token &Tok) {
   return "";
 }
 
-enum class State {
-  INIT,
-  EXPECT_IDENTIFIER,
-  EXPECT_COLON,
-  GET_VALUE,
-  EXPECT_COMMA_OR_CLOSE,
-  FINAL
-};
-
-DeserializePragmaHandler::DeserializePragmaHandler(clang::CompilerInstance &CI_, DeserializeWriterAdapter &Writer_) :
-  PragmaHandler("deserialize"), CI(CI_), Writer(Writer_) {}
-
-bool ContainsFunctionCall(const Stmt* S) {
+static bool ContainsFunctionCall(const Stmt* S) {
     if (isa<CallExpr>(S)) {
         return true;
     }
@@ -80,6 +81,9 @@ bool ContainsFunctionCall(const Stmt* S) {
     }
     return false;
 }
+
+DeserializePragmaHandler::DeserializePragmaHandler(clang::CompilerInstance &CI_, DeserializeWriterAdapter &Writer_) :
+  PragmaHandler("deserialize"), CI(CI_), Writer(Writer_) {}
 
 // Here we parse the two supported forms of the "deserialize" pragma:
 // * Structure form:

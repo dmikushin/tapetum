@@ -16,7 +16,7 @@ public :
   virtual void serializeFunction(const std::string &toArg, clang::Stmt *S) = 0;
 
   // Generate AST structure serialization code for the pragma replacement at the same location.
-  virtual void serializeStruct(const std::string &fromArg, const std::string &toArg, clang::Stmt *S) = 0;
+  virtual void serializeStruct(const std::string &toArg, const std::string &fromArg, clang::Stmt *S) = 0;
 };
 
 #endif // SERIALIZE_WRITER_ADAPTER_H
