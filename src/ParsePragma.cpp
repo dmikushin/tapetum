@@ -1,5 +1,6 @@
 #include "ParsePragma.h"
 
+#include "clang/AST/ParentMapContext.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/TokenKinds.h"
@@ -60,6 +61,28 @@ static std::string getArgumentValue(Preprocessor &PP, Token &Tok) {
     return Tok.getIdentifierInfo()->getName().str();
   }
   return "";
+}
+
+// https://stackoverflow.com/a/40128699/4063520
+static const clang::Stmt* getParentFunctionBody(ASTContext &Context, const Stmt *S) {
+    while (true) {
+        // Get parents of the statement.
+        const auto& parents = Context.getParents(*S);
+        if (parents.empty()) {
+            llvm::errs() << "Can not find parent\n";
+            return nullptr;
+        }
+        // TODO What if multiple parents?
+        llvm::errs() << "find parent size=" << parents.size() << "\n";
+        S = parents[0].get<Stmt>();
+        if (!S)
+            return nullptr;
+        S->dump();
+        if (isa<CompoundStmt>(S)) {
+            // This represents a group of statements like { stmt stmt }
+            return S;
+        }
+    } 
 }
 
 void tapetum::ParsePragmaWithStateMachine(clang::CompilerInstance &CI, Preprocessor &PP,
@@ -137,6 +160,12 @@ void tapetum::ParsePragmaWithStateMachine(clang::CompilerInstance &CI, Preproces
   S = Visitor.getNextStatement();
   if (!S) {
     PP.Diag(Tok, diag::err_expected) << "statement";
+    return;
+  }
+
+  // Make sure the statement belongs to some function body.
+  if (!getParentFunctionBody(CI.getASTContext(), S)) {
+    PP.Diag(Tok, diag::err_expected) << "enclosing function body";
     return;
   }
 }

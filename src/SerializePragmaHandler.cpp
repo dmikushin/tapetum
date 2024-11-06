@@ -3,19 +3,14 @@
 
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Basic/Diagnostic.h"
-#include "clang/Basic/TokenKinds.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendActions.h"
 #include "clang/Lex/Lexer.h"
 #include "clang/Lex/Preprocessor.h"
-#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
 #include "llvm/Support/raw_ostream.h"
 #include <string>
 
 using namespace clang;
-using namespace clang::tooling;
-using namespace llvm;
 using namespace tapetum;
 
 static bool ContainsFunctionCall(const Stmt* S) {
@@ -57,14 +52,6 @@ void SerializePragmaHandler::HandlePragma(Preprocessor &PP,
     PP.Diag(Tok, diag::err_expected) << "to";
     return;
   }
-
-  // TODO Make sure the statement belongs to some function body.
-  // Check if the statement is part of a function body
-  //llvm::outs << S->getParent() << "\n";
-  /*auto parent = S->getParent();
-  while (parent && !isa<FunctionDecl>(parent)) {
-    parent = parent->getParent();
-  }*/
 
   // Find whether this is a struct or functional form of pragma:
   // if "to:" is not present, the pragma is expected to be functional.
