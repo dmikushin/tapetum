@@ -58,6 +58,7 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} INTERFACE ThirdParty/rapidjson/include)
 target_compile_options(${PROJECT_NAME} INTERFACE -fplugin=$<TARGET_FILE:${PROJECT_NAME}_plugin>)
+# TODO Does not trigger rebuild of the example programs
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_plugin)
 
 add_subdirectory(example)
